@@ -1,6 +1,5 @@
 <?php namespace Zofe\Rapyd\DataGrid;
 
-use Illuminate\Support\Facades\View;
 use Zofe\Rapyd\DataSet as DataSet;
 use Zofe\Rapyd\Persistence;
 use Illuminate\Support\Facades\Config;
@@ -11,6 +10,8 @@ class DataGrid extends DataSet
     protected $fields = array();
     /** @var Column[]  */
     public $columns = array();
+    /** @var ActionColumn[]  */
+    public $actionColumns = array();
     public $headers = array();
     public $rows = array();
     public $output = "";
@@ -71,6 +72,19 @@ class DataGrid extends DataSet
                     $callable($row);
                 }
             }
+
+            if (sizeof($this->actionColumns) > 0) {
+                $actionCell = new Cell('Actions');
+                $actionCellValue = '';
+                /** @var ActionColumn $actionColumn */
+                foreach ($this->actionColumns as $actionColumn) {
+                    $actionCellValue .= $actionColumn->toHtml($tablerow);
+                }
+
+                $actionCell->value($actionCellValue);
+                $row->add($actionCell);
+            }
+
             $this->rows[] = $row;
         }
         $this->output = \View::make($view, array('dg' => $this, 'buttons'=>$this->button_container, 'label'=>$this->label))->render();
@@ -277,6 +291,18 @@ class DataGrid extends DataSet
     {
         $result = nl2br(htmlspecialchars($string));
         return Config::get('rapyd.sanitize.num_characters') > 0 ? str_limit($result, Config::get('rapyd.sanitize.num_characters')) : $result;
+    }
+
+    /**
+     * @param string $name
+     * @param null|string $link
+     * @param null|string $label
+     * @return ActionColumn
+     */
+    public function addActionColumn($name, $link = null, $label = null) {
+        $actionColumn = new ActionColumn($name, $link, $label);
+        $this->actionColumns[$name] = $actionColumn;
+        return $actionColumn;
     }
 
 }
