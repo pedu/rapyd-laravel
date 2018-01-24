@@ -12,28 +12,28 @@ namespace Zofe\Rapyd\DataGrid;
 class ActionColumn
 {
     /** @var string $name */
-    private $name;
+    protected $name;
 
     /** @var string $link */
-    private $link = null;
+    protected $link = null;
 
     /** @var null|string $label */
-    private $label;
+    protected $label;
 
     /** @var null|string $title */
-    private $title;
+    protected $title;
 
     /** @var array $linkClasses */
-    private $linkClasses = [];
+    protected $linkClasses = [];
 
     /** @var array $spanClasses */
-    private $spanClasses = [];
+    protected $spanClasses = [];
 
     /** @var callable|string|null $customLink */
-    private $customLink = null;
+    protected $customLink = null;
 
     /** @var array $customAttributes */
-    private $customAttributes = [];
+    protected $customAttributes = [];
 
     /**
      * ActionColumn constructor.

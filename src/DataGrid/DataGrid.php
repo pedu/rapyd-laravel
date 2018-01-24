@@ -80,7 +80,7 @@ class DataGrid extends DataSet
                 foreach ($this->actionColumns as $actionColumn) {
                     $actionCellValue .= $actionColumn->toHtml($tablerow);
                 }
-
+                $actionCell->attributes(['class' => 'action-collumn']);
                 $actionCell->value($actionCellValue);
                 $row->add($actionCell);
             }
@@ -299,10 +299,25 @@ class DataGrid extends DataSet
      * @param null|string $label
      * @return ActionColumn
      */
-    public function addActionColumn($name, $link = null, $label = null) {
-        $actionColumn = new ActionColumn($name, $link, $label);
+    public function addActionColumn($name, $link = null, $label = null, $asForm = false) {
+        $actionColumn = new ActionColumn($name, $link, $label, $asForm);
         $this->actionColumns[$name] = $actionColumn;
         return $actionColumn;
     }
+
+    /**
+     * @param string $name
+     * @param null|string $link
+     * @param null|string $label
+     * @return ActionColumnForm
+     */
+    public function addActionColumnForm($name, $link = null, $label = null, $asForm = false) {
+        $actionColumn = new ActionColumnForm($name, $link, $label, $asForm);
+        $this->actionColumns[$name] = $actionColumn;
+        return $actionColumn;
+    }
+
+
+
 
 }
