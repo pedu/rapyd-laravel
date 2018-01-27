@@ -9,23 +9,32 @@
             <tr>
                 @foreach ($dg->columns as $column)
                     <th{!! $column->buildAttributes() !!}>
-                        @if ($column->orderby)
-                            @if ($dg->onOrderby($column->orderby_field, 'asc'))
-                                <span class="glyphicon glyphicon-chevron-up"></span>
-                            @else
-                                <a href="{{ $dg->orderbyLink($column->orderby_field,'asc') }}">
+
+                        @if ($column instanceof \Zofe\Rapyd\DataGrid\CheckboxColumn)
+
+                            <input type="checkbox" data-masscheckbox-head />
+
+                        @else
+
+                            @if ($column->orderby)
+                                @if ($dg->onOrderby($column->orderby_field, 'asc'))
                                     <span class="glyphicon glyphicon-chevron-up"></span>
-                                </a>
-                            @endif
-                            @if ($dg->onOrderby($column->orderby_field, 'desc'))
-                                <span class="glyphicon glyphicon-chevron-down"></span>
-                            @else
-                                <a href="{{ $dg->orderbyLink($column->orderby_field,'desc') }}">
+                                @else
+                                    <a href="{{ $dg->orderbyLink($column->orderby_field,'asc') }}">
+                                        <span class="glyphicon glyphicon-chevron-up"></span>
+                                    </a>
+                                @endif
+                                @if ($dg->onOrderby($column->orderby_field, 'desc'))
                                     <span class="glyphicon glyphicon-chevron-down"></span>
-                                </a>
+                                @else
+                                    <a href="{{ $dg->orderbyLink($column->orderby_field,'desc') }}">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </a>
+                                @endif
                             @endif
+                            {!! $column->label !!}
+
                         @endif
-                        {!! $column->label !!}
                     </th>
                 @endforeach
             </tr>
@@ -51,9 +60,15 @@
                 {!! $dg->links() !!}
             </div>
             <div class="pull-right rpd-total-rows">
-                {!! $dg->totalRows() !!}
+                {{ trans('Total rows') }}: {!! $dg->totalRows() !!}
             </div>
         @endif
     </div>
+
+    <div class="rapyd-massbuttons">
+        @include('rapyd::massbuttons')
+    </div>
+
 </div>
 
+{!! Rapyd::scripts() !!}

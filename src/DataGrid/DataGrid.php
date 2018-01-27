@@ -3,6 +3,7 @@
 use Zofe\Rapyd\DataSet as DataSet;
 use Zofe\Rapyd\Persistence;
 use Illuminate\Support\Facades\Config;
+use Zofe\Rapyd\Rapyd;
 
 class DataGrid extends DataSet
 {
@@ -12,11 +13,13 @@ class DataGrid extends DataSet
     public $columns = array();
     /** @var ActionColumn[]  */
     public $actionColumns = array();
+    public $checkboxColumns = array();
     public $headers = array();
     public $rows = array();
     public $output = "";
     public $attributes = array("class" => "table");
     public $checkbox_form = false;
+    public $massCheckoutButtons = [];
     
     protected $row_callable = array();
 
@@ -55,16 +58,24 @@ class DataGrid extends DataSet
 
             foreach ($this->columns as $column) {
 
-                $cell = new Cell($column->name);
-                $sanitize = (count($column->filters) || $column->cell_callable) ? false : true;
-                $value = $this->getCellValue($column, $tablerow, $sanitize);
-                $cell->value($value);
-                $cell->parseFilters($column->filters);
-                if ($column->cell_callable) {
-                    $callable = $column->cell_callable;
-                    $cell->value($callable($cell->value, $tablerow));
+                if ($column instanceof CheckboxColumn) {
+                    $actionCell = new Cell($column->name);
+                    $actionCell->attributes(['class' => 'checkbox-collumn']);
+                    $actionCell->value($column->toHtml($tablerow));
+                    $row->add($actionCell);
                 }
-                $row->add($cell);
+                else {
+                    $cell = new Cell($column->name);
+                    $sanitize = (count($column->filters) || $column->cell_callable) ? false : true;
+                    $value = $this->getCellValue($column, $tablerow, $sanitize);
+                    $cell->value($value);
+                    $cell->parseFilters($column->filters);
+                    if ($column->cell_callable) {
+                        $callable = $column->cell_callable;
+                        $cell->value($callable($cell->value, $tablerow));
+                    }
+                    $row->add($cell);
+                }
             }
 
             if (count($this->row_callable)) {
@@ -318,6 +329,20 @@ class DataGrid extends DataSet
     }
 
 
+    /**
+     * @param $name
+     * @return CheckboxColumn
+     */
+    public function addMassCheckbox() {
+        Rapyd::js('masscheckbox/masscheckbox.js');
+        Rapyd::css('masscheckbox/masscheckbox.css');
+        $this->columns['masscheckbox'] = new CheckboxColumn();;
+        return $this->columns['masscheckbox'];
+    }
 
 
+    public function addMassCheckboxButton($name, $link) {
+        $this->massCheckoutButtons[$name] = new MassCheckoutButton($name, $link);
+        return $this->massCheckoutButtons[$name];
+    }
 }
