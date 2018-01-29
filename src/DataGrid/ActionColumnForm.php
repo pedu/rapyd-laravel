@@ -103,7 +103,7 @@ class ActionColumnForm extends ActionColumn
 
         if (empty($this->formParameters['url']))
         {
-            $this->formParameters['url'] = $this->link;
+            $this->formParameters['url'] = $link;
         }
         if (empty($this->buttonParameters['title']))
         {
