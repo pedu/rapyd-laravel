@@ -71,7 +71,8 @@ class ActionColumnForm extends ActionColumn
     }
 
 
-    /**
+
+     /**
      * Get HTML link.
      *
      * @param $entity
@@ -101,14 +102,8 @@ class ActionColumnForm extends ActionColumn
         }
 
 
-        if (empty($this->formParameters['url']))
-        {
-            $this->formParameters['url'] = $link;
-        }
-        if (empty($this->buttonParameters['title']))
-        {
-            $this->buttonParameters['title'] = $this->title;
-        }
+        $this->formParameters['url'] = $link;
+        $this->buttonParameters['title'] = $this->title;
 
         $form = app('form');
 
@@ -118,4 +113,4 @@ class ActionColumnForm extends ActionColumn
             .$form->close();
 
     }
-}
+ }
