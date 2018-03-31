@@ -2,7 +2,7 @@ var MassCheckbox = new function() {
 
         this.init = function() {
             $('.rpd-datagrid [data-masscheckbox-head]').on('change', this.onHeadCheckbox.bind(this));
-            $('.rpd-datagrid [data-masscheckbox-button]').on('click', this.onFormSend.bind(this));
+            $('.rpd-datagrid [data-masscheckbox-button]').off('click.formSend').on('click.formSend', this.onFormSend.bind(this));
             $('.rpd-datagrid').find('input[data-masscheckbox]').on('change', this.toggleButtonsVisibility.bind(this));
             this.toggleButtonsVisibility();
         }
