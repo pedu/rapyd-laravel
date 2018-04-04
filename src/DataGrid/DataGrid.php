@@ -22,13 +22,22 @@ class DataGrid extends DataSet
     public $massCheckoutButtons = [];
     
     protected $row_callable = array();
+    /**
+     * @var []
+     */
+    protected $rowsBefore = [];
+    /**
+     * @var []
+     */
+    protected $rowsAfter = [];
 
     /**
      * @param string $name
      * @param string $label
-     * @param bool   $orderby
+     * @param bool $orderby
      *
      * @return Column
+     * @throws \Exception
      */
     public function add($name, $label = null, $orderby = false)
     {
@@ -51,6 +60,8 @@ class DataGrid extends DataSet
         parent::build();
 
         Persistence::save();
+
+        $this->buildAfterAndBeforeRows($this->rowsBefore);
 
         foreach ($this->data as $tablerow) {
 
@@ -98,9 +109,30 @@ class DataGrid extends DataSet
 
             $this->rows[] = $row;
         }
+
+        $this->buildAfterAndBeforeRows($this->rowsAfter);
+
         $this->output = \View::make($view, array('dg' => $this, 'buttons'=>$this->button_container, 'label'=>$this->label))->render();
         return $this->output;
     }
+
+
+    /**
+     * @param array $rows
+     */
+    private function buildAfterAndBeforeRows($rows)
+    {
+        /** @var Row $row */
+        foreach ($rows as $row) {
+            foreach ($this->columns as $column) {
+                if (!$row->cell($column->name)) {
+                    $row->add(new Cell($column->name));
+                }
+            }
+            $this->rows[] = $row;
+        }
+    }
+
 
     public function buildCSV($file = '', $timestamp = '', $sanitize = true,$del = array())
     {
@@ -344,5 +376,55 @@ class DataGrid extends DataSet
     public function addMassCheckboxButton($name, $link) {
         $this->massCheckoutButtons[$name] = new MassCheckoutButton($name, $link);
         return $this->massCheckoutButtons[$name];
+    }
+
+
+    /**
+     * @param array $data
+     * @return Row
+     */
+    private function createRow($data = [])
+    {
+        $row = new Row($data);
+        foreach ($data as $column => $value) {
+            $cell = new Cell($column);
+            $cell->value($value);
+            $row->add($cell);
+        }
+        // create all columns for row
+        foreach ($this->columns as $column) {
+            if (!$row->cell($column->name)) {
+                $cell = new Cell($column->name);
+                $row->add($cell);
+            }
+        }
+
+        return $row;
+    }
+
+
+    /**
+     * @param string $name
+     * @param array $data
+     * @return mixed
+     */
+    public function addRowBefore($name, $data = [])
+    {
+        $this->rowsBefore[$name] = $this->createRow($data);
+
+        return $this->rowsBefore[$name];
+    }
+
+
+    /**
+     * @param string $name
+     * @param array $data
+     * @return mixed
+     */
+    public function addRowAfter($name, $data = [])
+    {
+        $this->rowsAfter[$name] = $this->createRow($data);
+
+        return $this->rowsAfter[$name];
     }
 }
