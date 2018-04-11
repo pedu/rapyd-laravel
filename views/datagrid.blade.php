@@ -1,8 +1,14 @@
 
 
 <div class="rpd-datagrid">
+
+    <div class="rapyd-massbuttons">
+        @include('rapyd::massbuttontop')
+    </div>
+
     @include('rapyd::toolbar', array('label'=>$label, 'buttons_right'=>$buttons['TR']))
-    
+
+
     <div class="table-responsive">
         <table{!! $dg->buildAttributes() !!}>
             <thead>
