@@ -144,7 +144,7 @@ class ActionColumn
     /**
      * Set link title.
      *
-     * @param string $title
+     * @param string|closure $title
      * @return $this
      */
     public function setTitle($title)
@@ -227,7 +227,14 @@ class ActionColumn
             $label = $this->label;
         }
 
-        return  '<a class="' . implode(' ', $this->linkClasses) . '" title="' . $this->title . '" href="' . $link . '"' . $custonAttributes . '>'.
+        if (is_callable($this->title)) {
+            $method = $this->title;
+            $title = $method($entity);
+        } else {
+            $title = $this->title;
+        }
+
+        return  '<a class="' . implode(' ', $this->linkClasses) . '" title="' . $title . '" href="' . $link . '"' . $custonAttributes . '>'.
                     $innerSpan.
                     $label.
                 '</a>';
