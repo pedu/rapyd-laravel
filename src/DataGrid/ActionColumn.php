@@ -9,6 +9,8 @@
 namespace Zofe\Rapyd\DataGrid;
 
 
+use Closure;
+
 class ActionColumn
 {
     /** @var string $name */
@@ -40,7 +42,7 @@ class ActionColumn
      *
      * @param string $name
      * @param string|null $link
-     * @param string|null $label
+     * @param string|null|closure $label
      */
     public function __construct($name, $link = null, $label = null)
     {
@@ -218,9 +220,16 @@ class ActionColumn
 
         $innerSpan = (count($this->spanClasses) > 0) ? '<span class="' . implode(' ', $this->spanClasses) . '"></span>' : '';
 
+        if (is_callable($this->label)) {
+            $method = $this->label;
+            $label = $method($entity);
+        } else {
+            $label = $this->label;
+        }
+
         return  '<a class="' . implode(' ', $this->linkClasses) . '" title="' . $this->title . '" href="' . $link . '"' . $custonAttributes . '>'.
                     $innerSpan.
-                    $this->label.
+                    $label.
                 '</a>';
     }
 }

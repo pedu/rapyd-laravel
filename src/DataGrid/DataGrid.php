@@ -1,5 +1,6 @@
 <?php namespace Zofe\Rapyd\DataGrid;
 
+use Closure;
 use Zofe\Rapyd\DataSet as DataSet;
 use Zofe\Rapyd\Persistence;
 use Illuminate\Support\Facades\Config;
@@ -339,7 +340,7 @@ class DataGrid extends DataSet
     /**
      * @param string $name
      * @param null|string $link
-     * @param null|string $label
+     * @param null|string|closure $label
      * @return ActionColumn
      */
     public function addActionColumn($name, $link = null, $label = null, $asForm = false) {
