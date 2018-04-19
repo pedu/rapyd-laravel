@@ -24,6 +24,14 @@ class ActionColumnForm extends ActionColumn
         'class' => 'btn'
     );
 
+    private $displayWhenMethods = [];
+
+    /**
+     * if can not display, displays this
+     * @var string
+     */
+    private $placeholder = '';
+
     /**
      * @param $label
      * @return $this
@@ -71,6 +79,48 @@ class ActionColumnForm extends ActionColumn
     }
 
 
+    /**
+     * can be used to specify, if action button displays or not
+     *
+     * @param $method
+     * @return ActionColumnForm
+     */
+    public function setDisplayWhen($method) {
+        $this->displayWhenMethods[] = $method;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $s
+     */
+    public function setCanNotDisplayPlaceholder(string $s) {
+        $this->placeholder = $s;
+    }
+
+
+    /**
+     * @param $entity
+     * @return bool
+     */
+    protected function canDisplay($entity) {
+        foreach ($this->displayWhenMethods as $method) {
+            if (is_callable($method)) {
+                if (!$method($entity)) {
+                    return false;
+                }
+            }
+            else {
+                if (!$method) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 
      /**
      * Get HTML link.
@@ -80,6 +130,10 @@ class ActionColumnForm extends ActionColumn
      */
     public function toHtml($entity)
     {
+        if (!$this->canDisplay($entity)) {
+            return $this->placeholder;
+        }
+
         try
         {
             if (null == $this->customLink)

@@ -19,6 +19,12 @@ class CheckboxColumn
 
     public $name = 'masscheckbox';
 
+    /**
+     * @var string
+     */
+    protected $placeholder = '';
+    protected $displayWhenMethods = [];
+
 
     /**
      * Add class.
@@ -71,6 +77,50 @@ class CheckboxColumn
         return $this;
     }
 
+
+    /**
+     * can be used to specify, if action button displays or not
+     *
+     * @param $method
+     * @return ActionColumnForm
+     */
+    public function setDisplayWhen($method) {
+        $this->displayWhenMethods[] = $method;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $s
+     */
+    public function setCanNotDisplayPlaceholder(string $s) {
+        $this->placeholder = $s;
+    }
+
+
+    /**
+     * @param $entity
+     * @return bool
+     */
+    protected function canDisplay($entity) {
+        foreach ($this->displayWhenMethods as $method) {
+            if (is_callable($method)) {
+                if (!$method($entity)) {
+                    return false;
+                }
+            }
+            else {
+                if (!$method) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
     /**
      * Get HTML link.
      *
@@ -79,6 +129,10 @@ class CheckboxColumn
      */
     public function toHtml($entity)
     {
+        if (!$this->canDisplay($entity)) {
+            return $this->placeholder;
+        }
+
         $customAttribute = '';
         foreach ($this->customAttributes as $attribute => $value)
         {
