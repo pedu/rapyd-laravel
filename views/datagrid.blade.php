@@ -66,7 +66,7 @@
                 {!! $dg->links() !!}
             </div>
             <div class="pull-right rpd-total-rows">
-                {{ trans('Total rows') }}: {!! $dg->totalRows() !!}
+                {{ trans('rapyd::rapyd.total_rows') }}: {!! $dg->totalRows() !!}
             </div>
         @endif
     </div>

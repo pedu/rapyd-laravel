@@ -21,4 +21,5 @@ return array(
     'no_records' => 'There are no records to show.',
     'conf_delete'=> 'Do you want to eliminate the record?',
 
+    'total_rows' => 'Total rows',
 );
